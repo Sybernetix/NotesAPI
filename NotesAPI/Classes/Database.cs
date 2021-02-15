@@ -189,7 +189,68 @@ namespace NotesAPI.Classes
             }
         }
 
-        public static bool VerifyUserCredentials(string username, string password)
+        public static void InsertToken(int userID, string token)
+        {
+
+            string query;
+            if (TokenExist(userID))
+            {
+                query = @"UPDATE tokens SET token = @token WHERE userID = @userID";
+            }
+            else
+            {
+                query = @"INSERT INTO tokens (userID, token) VALUES (@userID, @token)";
+            }
+            
+            MySqlCommand com = new MySqlCommand(query);
+            com.CommandType = System.Data.CommandType.Text;
+            com.Parameters.AddWithValue("@token", token);
+            com.Parameters.AddWithValue("@userID", userID);
+            RunNotesQuery(com);
+        }
+
+        private static bool TokenExist(int userID)
+        {
+            string query = @"SELECT * FROM tokens WHERE userID = @userID";
+            MySqlCommand com = new MySqlCommand(query);
+            com.CommandType = System.Data.CommandType.Text;
+            com.Parameters.AddWithValue("@userID", userID);
+            if(RunNotesQuery(com).Rows.Count != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool TokenExist(string token)
+        {
+            string query = @"SELECT * FROM tokens WHERE token = @token";
+            MySqlCommand com = new MySqlCommand(query);
+            com.CommandType = System.Data.CommandType.Text;
+            com.Parameters.AddWithValue("@token", token);
+            if (RunNotesQuery(com).Rows.Count != 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static void DeleteToken(string token)
+        {
+            string query = @"DELETE FROM tokens WHERE token = @token";
+            MySqlCommand com = new MySqlCommand(query);
+            com.CommandType = System.Data.CommandType.Text;
+            com.Parameters.AddWithValue("@token", token);
+            RunNotesQuery(com);
+        }
+
+        public static int VerifyUserCredentials(string username, string password)
         {
             string query = @"SELECT userID FROM users WHERE username = @username AND password = @password";
             MySqlCommand com = new MySqlCommand(query);
@@ -202,11 +263,11 @@ namespace NotesAPI.Classes
                 int userID = Convert.ToInt32(dt.Rows[0][0].ToString());
                 UpdateUserLastLogin(userID);
 
-                return true;
+                return userID;
             }
             else
             {
-                return false;
+                return 0; //No user found
             }
         }
 

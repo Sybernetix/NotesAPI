@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,6 +10,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using System.Web.Script.Serialization;
 
 namespace NotesAPI.Classes
 {
@@ -17,19 +19,21 @@ namespace NotesAPI.Classes
         public override void OnAuthorization(HttpActionContext actionContext)
         {
             bool authorizationSuccess = false;
-            if (actionContext.Request.Headers.Authorization != null)
+            try
             {
                 string body = actionContext.Request.Content.ReadAsStringAsync().Result;
-                string authenticationToken = Encoding.UTF8.GetString(Convert.FromBase64String(actionContext.Request.Headers.Authorization.Parameter));
-                string username = authenticationToken.Split(':')[0];
-                string password = authenticationToken.Substring(username.Length + 1);
+                dynamic jsonObject = Newtonsoft.Json.JsonConvert.DeserializeObject(body);
+                string token = Convert.ToString(jsonObject["token"]);
 
-                if (Database.VerifyUserCredentials(username, password))
+                if (Database.TokenExist(token))
                 {
                     authorizationSuccess = true;
                 }
             }
-
+            catch (Exception)
+            {
+                //Error With JSON payload
+            }
 
             if (!authorizationSuccess)
             {

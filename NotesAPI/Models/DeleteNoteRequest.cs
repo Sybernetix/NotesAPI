@@ -7,6 +7,7 @@ namespace NotesAPI.Models
 {
     public class DeleteNoteRequest
     {
+        public string token { get; set; }
         public int noteID { get; set; }
     }
 }

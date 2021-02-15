@@ -140,6 +140,8 @@
     <Compile Include="Models\DeleteNoteRequest.cs" />
     <Compile Include="Models\GetNotesRequest.cs" />
     <Compile Include="Models\GetNotesResponse.cs" />
+    <Compile Include="Models\LoginResponse.cs" />
+    <Compile Include="Models\LogoutRequest.cs" />
     <Compile Include="Models\NewNoteRequest.cs" />
     <Compile Include="Models\Note.cs" />
     <Compile Include="Models\NoteAttribute.cs" />

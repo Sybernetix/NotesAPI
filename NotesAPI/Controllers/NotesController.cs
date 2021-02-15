@@ -6,12 +6,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 
 namespace NotesAPI.Controllers
 {
     public class NotesController : ApiController
     {
+        [HttpPost]
+        [Route("api/login")]
+        public IHttpActionResult Login()
+        {
+            if (Request.Headers.Authorization != null)
+            {
+                string body = Request.Content.ReadAsStringAsync().Result;
+                string authenticationToken = Encoding.UTF8.GetString(Convert.FromBase64String(Request.Headers.Authorization.Parameter));
+                string username = authenticationToken.Split(':')[0];
+                string password = authenticationToken.Substring(username.Length + 1);
+                string token = Utilities.GetSha256HashString(username + password + DateTime.Now.ToString());
+                int userID = Database.VerifyUserCredentials(username, password);
+
+                if (userID != 0)
+                {
+                    Database.InsertToken(userID, token);
+                    LoginResponse loginResponse = new LoginResponse();
+                    loginResponse.token = token;
+                    return Ok(loginResponse);
+                }
+            }
+
+            return BadRequest();
+        }
+
+        [NotesAuthorizationFilter]
+        [HttpPost]
+        [Route("api/logout")]
+        public IHttpActionResult Logout(LogoutRequest logoutRequest)
+        {
+            try
+            {
+                Database.DeleteToken(logoutRequest.token);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
 
         [NotesAuthorizationFilter]
         [HttpPost]

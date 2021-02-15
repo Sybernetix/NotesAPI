@@ -5,10 +5,8 @@ using System.Web;
 
 namespace NotesAPI.Models
 {
-    public class GetNotesRequest
+    public class LogoutRequest
     {
         public string token { get; set; }
-        public int projectID { get; set; }
-        public List<int> attributeIDs { get; set; }
     }
 }
