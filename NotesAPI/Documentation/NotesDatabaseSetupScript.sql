@@ -1,8 +1,8 @@
 /*Create the database*/
-CREATE SCHEMA `notedb2` ;
+CREATE SCHEMA `notedb` ;
 
 /*Create users table*/
-CREATE TABLE `notedb2`.`users` (
+CREATE TABLE `notedb`.`users` (
   `userID` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(100) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
@@ -12,31 +12,31 @@ CREATE TABLE `notedb2`.`users` (
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE);
   
 /*Create tokens table*/  
-CREATE TABLE `notedb2`.`tokens` (
+CREATE TABLE `notedb`.`tokens` (
   `userID` INT NOT NULL,
   `token` VARCHAR(100) NOT NULL);
   
 /*Create projects table*/
-CREATE TABLE `notedb2`.`projects` (
+CREATE TABLE `notedb`.`projects` (
   `projectID` INT NOT NULL AUTO_INCREMENT,
   `projectName` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`projectID`),
   UNIQUE INDEX `projectName_UNIQUE` (`projectName` ASC) VISIBLE);
  
 /*Create attributes table*/ 
-CREATE TABLE `notedb2`.`attributes` (
+CREATE TABLE `notedb`.`attributes` (
   `attributeID` INT NOT NULL AUTO_INCREMENT,
   `attributeName` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`attributeID`),
   UNIQUE INDEX `attributeName_UNIQUE` (`attributeName` ASC) VISIBLE);
   
 /*Create attributetonote table*/
-CREATE TABLE `notedb2`.`attributetonote` (
+CREATE TABLE `notedb`.`attributetonote` (
   `noteID` INT NOT NULL,
   `attributeID` INT NOT NULL);
  
 /*Create notes table*/ 
-CREATE TABLE `notedb2`.`notes` (
+CREATE TABLE `notedb`.`notes` (
   `noteID` INT NOT NULL AUTO_INCREMENT,
   `projectID` INT NULL,
   `noteBody` VARCHAR(1000) NULL,
